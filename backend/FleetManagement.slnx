@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="FleetManagement.API/FleetManagement.API.csproj" />
+  <Project Path="FleetManagement.Application/FleetManagement.Application.csproj" />
+  <Project Path="FleetManagement.Domain/FleetManagement.Domain.csproj" />
+  <Project Path="FleetManagement.Infrastructure/FleetManagement.Infrastructure.csproj" />
+</Solution>
