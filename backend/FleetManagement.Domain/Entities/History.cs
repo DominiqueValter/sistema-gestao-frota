@@ -7,6 +7,5 @@ public class History
     public string Action { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime Date { get; set; } = DateTime.UtcNow;
-
     public Vehicle Vehicle { get; set; } = null!;
 }

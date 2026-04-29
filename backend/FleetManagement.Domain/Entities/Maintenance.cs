@@ -12,6 +12,5 @@ public class Maintenance
     public int Mileage { get; set; }
     public decimal Cost { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
     public Vehicle Vehicle { get; set; } = null!;
 }
