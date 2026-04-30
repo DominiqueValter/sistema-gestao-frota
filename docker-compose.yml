@@ -3,8 +3,8 @@ services:
     image: postgres:16
     container_name: fleet_postgres
     environment:
-      POSTGRES_USER: fleet_user
-      POSTGRES_PASSWORD: fleet_pass
+      POSTGRES_USER: fleetuser
+      POSTGRES_PASSWORD: fleetpass123
       POSTGRES_DB: fleet_db
     ports:
       - "5432:5432"

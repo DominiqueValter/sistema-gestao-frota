@@ -21,7 +21,15 @@ builder.Services.AddScoped<MaintenanceService>();
 builder.Services.AddScoped<HistoryService>();
 
 // ─── Controllers + Swagger ───
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Resolve o ciclo de referência
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        // Status como texto
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

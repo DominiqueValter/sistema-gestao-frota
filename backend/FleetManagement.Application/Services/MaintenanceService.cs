@@ -1,4 +1,4 @@
-using FleetManagement.Application.DTOs.Maintenance;
+Ôªøusing FleetManagement.Application.DTOs.Maintenance;
 using FleetManagement.Application.Interfaces;
 using FleetManagement.Domain.Entities;
 using FleetManagement.Domain.Enums;
@@ -28,20 +28,20 @@ public class MaintenanceService
     {
         var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
         if (vehicle is null)
-            throw new KeyNotFoundException($"VeÌculo {vehicleId} n„o encontrado.");
+            throw new KeyNotFoundException($"Ve√≠culo {vehicleId} n√£o encontrado.");
 
-        // Regra: veÌculo em manutenÁ„o n„o pode receber nova manutenÁ„o
+        // Regra: ve√≠culo em manuten√ß√£o n√£o pode receber nova manuten√ß√£o
         if (vehicle.Status == VehicleStatus.EM_MANUTENCAO)
-            throw new InvalidOperationException("VeÌculo j· est· em manutenÁ„o.");
+            throw new InvalidOperationException("Ve√≠culo j√° est√° em manuten√ß√£o.");
 
-        // Regra: quilometragem da manutenÁ„o n„o pode ser menor que a atual
+        // Regra: quilometragem da manuten√ß√£o n√£o pode ser menor que a atual
         if (dto.Mileage < vehicle.Mileage)
             throw new InvalidOperationException(
-                $"Quilometragem da manutenÁ„o ({dto.Mileage}) n„o pode ser menor que a atual ({vehicle.Mileage}).");
+                $"Quilometragem da manuten√ß√£o ({dto.Mileage}) n√£o pode ser menor que a atual ({vehicle.Mileage}).");
 
         // Regra: status muda para EM_MANUTENCAO
         if (!Enum.TryParse<MaintenanceType>(dto.Type, out var maintenanceType))
-            throw new InvalidOperationException($"Tipo de manutenÁ„o inv·lido: {dto.Type}.");
+            throw new InvalidOperationException($"Tipo de manuten√ß√£o inv√°lido: {dto.Type}.");
 
         vehicle.Status = VehicleStatus.EM_MANUTENCAO;
         vehicle.UpdatedAt = DateTime.UtcNow;
@@ -53,20 +53,20 @@ public class MaintenanceService
             VehicleId = vehicleId,
             Type = maintenanceType,
             Description = dto.Description,
-            Date = dto.Date,
+            Date = dto.Date.ToUniversalTime(), // ‚Üê adiciona isso
             Mileage = dto.Mileage,
             Cost = dto.Cost
         };
 
         await _maintenanceRepository.AddAsync(maintenance);
 
-        // Registra no histÛrico
+        // Registra no hist√≥rico
         await _historyRepository.AddAsync(new History
         {
             Id = Guid.NewGuid(),
             VehicleId = vehicleId,
             Action = "MANUTENCAO",
-            Description = $"ManutenÁ„o {dto.Type} registrada. Custo: R$ {dto.Cost:F2}. {dto.Description}",
+            Description = $"Manuten√ß√£o {dto.Type} registrada. Custo: R$ {dto.Cost:F2}. {dto.Description}",
             Date = DateTime.UtcNow
         });
 
