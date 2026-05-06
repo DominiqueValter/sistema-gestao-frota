@@ -285,7 +285,17 @@ export default function Vehicles() {
         ) : (
           <AnimatePresence>
             {vehicles
-              .filter((v) => (filter === "ALL" ? true : v.status === filter))
+              .filter((v) => {
+                const matchFilter = filter === "ALL" || v.status === filter;
+
+                const searchLower = search.toLowerCase();
+                const matchSearch =
+                  v.licensePlate.toLowerCase().includes(searchLower) ||
+                  v.model.toLowerCase().includes(searchLower) ||
+                  v.brand.toLowerCase().includes(searchLower);
+
+                return matchFilter && matchSearch;
+              })
               .map((v, i) => {
                 const status = statusConfig[v.status] || statusConfig.INATIVO;
                 return (
