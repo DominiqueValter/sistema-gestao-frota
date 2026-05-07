@@ -137,7 +137,7 @@ export default function Sidebar() {
                 key={index}
                 style={{
                   fontSize: 11,
-                  color: "#6b7280",
+                  color: "#e9eef6",
                   margin: "14px 10px 6px",
                   textTransform: "uppercase",
                   letterSpacing: "0.6px",
@@ -164,7 +164,7 @@ export default function Sidebar() {
                 textDecoration: "none",
                 fontSize: 13,
                 marginBottom: 4,
-                color: isActive ? "#fff" : "#9ca3af",
+                color: isActive ? "#fff" : "#b3c4e0",
                 background: isActive
                   ? "linear-gradient(135deg, #6366f1, #4f46e5)"
                   : "transparent",

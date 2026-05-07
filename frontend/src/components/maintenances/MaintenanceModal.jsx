@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import Swal from "sweetalert2";
@@ -24,57 +24,43 @@ const labelStyle = {
   display: "block",
 };
 
-export default function VehicleModal({ vehicle, onClose }) {
-  const isEditing = !!vehicle;
-
+export default function MaintenanceModal({ vehicles, onClose }) {
   const [form, setForm] = useState({
-    licensePlate: "",
-    model: "",
-    brand: "",
-    year: new Date().getFullYear(),
+    vehicleId: "",
+    type: "PREVENTIVA",
+    description: "",
+    date: new Date().toISOString().split("T")[0],
     mileage: 0,
-    status: "ATIVO",
+    cost: 0,
   });
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (vehicle) {
-      setForm({
-        licensePlate: vehicle.licensePlate,
-        model: vehicle.model,
-        brand: vehicle.brand,
-        year: vehicle.year,
-        mileage: vehicle.mileage,
-        status: vehicle.status,
-      });
-    }
-  }, [vehicle]);
-
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async () => {
-    if (!form.licensePlate || !form.model || !form.brand) {
+    if (!form.vehicleId || !form.description) {
       Swal.fire("Atenção", "Preencha todos os campos obrigatórios.", "warning");
       return;
     }
     setLoading(true);
     try {
-      if (isEditing) {
-        await api.put(`/vehicle/${vehicle.id}`, form);
-      } else {
-        await api.post("/vehicle", form);
-      }
+      await api.post(`/vehicles/${form.vehicleId}/maintenance`, {
+        ...form,
+        date: new Date(form.date).toISOString(),
+        mileage: Number(form.mileage),
+        cost: Number(form.cost),
+      });
       Swal.fire({
-        title: isEditing ? "Atualizado!" : "Cadastrado!",
+        title: "Manutenção registrada!",
         icon: "success",
         timer: 1500,
         showConfirmButton: false,
       });
       onClose(true);
     } catch (err) {
-      const msg = err.response?.data?.message || "Erro ao salvar veículo.";
+      const msg =
+        err.response?.data?.message || "Erro ao registrar manutenção.";
       Swal.fire("Erro", msg, "error");
     } finally {
       setLoading(false);
@@ -83,7 +69,6 @@ export default function VehicleModal({ vehicle, onClose }) {
 
   return (
     <>
-      {/* Overlay */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -97,8 +82,6 @@ export default function VehicleModal({ vehicle, onClose }) {
           zIndex: 40,
         }}
       />
-
-      {/* Modal */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -117,31 +100,26 @@ export default function VehicleModal({ vehicle, onClose }) {
           boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
         }}
       >
-        {/* Header */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-
             alignItems: "center",
             marginBottom: 24,
           }}
         >
           <div>
             <div
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
               style={{
                 width: 24,
                 height: 3,
-                background: "linear-gradient(135deg, #6366f1, #4f46e5)",
-                boxShadow: "0 4px 14px rgba(99,102,241,0.4)",
+                background: "#6366f1",
                 borderRadius: 2,
                 marginBottom: 6,
               }}
             />
             <h2 style={{ fontSize: 16, fontWeight: 600, color: "#1e1e2e" }}>
-              {isEditing ? "Editar veículo" : "Novo veículo"}
+              Nova manutenção
             </h2>
           </div>
           <button
@@ -151,72 +129,68 @@ export default function VehicleModal({ vehicle, onClose }) {
               border: "none",
               cursor: "pointer",
               color: "#9ca3af",
-              padding: 4,
             }}
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* Form */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-          <div
-            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
-          >
-            <div>
-              <label style={labelStyle}>Placa *</label>
-              <input
-                name="licensePlate"
-                value={form.licensePlate}
-                onChange={handleChange}
-                onFocus={(e) => (e.target.style.borderColor = "#6366f1")}
-                onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
-                style={inputStyle}
-                placeholder="ABC1234"
-                disabled={isEditing}
-              />
-            </div>
-            <div>
-              <label style={labelStyle}>Ano *</label>
-              <input
-                name="year"
-                type="number"
-                value={form.year}
-                onChange={handleChange}
-                onFocus={(e) => (e.target.style.borderColor = "#6366f1")}
-                onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
-                style={inputStyle}
-              />
-            </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div>
+            <label style={labelStyle}>Veículo *</label>
+            <select
+              name="vehicleId"
+              value={form.vehicleId}
+              onChange={handleChange}
+              style={inputStyle}
+            >
+              <option value="">Selecione um veículo</option>
+              {vehicles
+                .filter((v) => v.status === "ATIVO")
+                .map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.licensePlate} — {v.brand} {v.model}
+                  </option>
+                ))}
+            </select>
           </div>
 
           <div
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
           >
             <div>
-              <label style={labelStyle}>Modelo *</label>
-              <input
-                name="model"
-                value={form.model}
+              <label style={labelStyle}>Tipo *</label>
+              <select
+                name="type"
+                value={form.type}
                 onChange={handleChange}
-                onFocus={(e) => (e.target.style.borderColor = "#6366f1")}
-                onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
                 style={inputStyle}
-                placeholder="Civic"
-              />
+              >
+                <option value="PREVENTIVA">Preventiva</option>
+                <option value="CORRETIVA">Corretiva</option>
+              </select>
             </div>
             <div>
-              <label style={labelStyle}>Marca *</label>
+              <label style={labelStyle}>Data *</label>
               <input
-                name="brand"
-                value={form.brand}
+                name="date"
+                type="date"
+                value={form.date}
                 onChange={handleChange}
-                onFocus={(e) => (e.target.style.borderColor = "#6366f1")}
-                onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
                 style={inputStyle}
-                placeholder="Honda"
               />
             </div>
+          </div>
+
+          <div>
+            <label style={labelStyle}>Descrição *</label>
+            <input
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              style={inputStyle}
+              placeholder="Ex: Troca de óleo e filtro"
+            />
           </div>
 
           <div
@@ -229,15 +203,23 @@ export default function VehicleModal({ vehicle, onClose }) {
                 type="number"
                 value={form.mileage}
                 onChange={handleChange}
-                onFocus={(e) => (e.target.style.borderColor = "#6366f1")}
-                onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Custo (R$)</label>
+              <input
+                name="cost"
+                type="number"
+                step="0.01"
+                value={form.cost}
+                onChange={handleChange}
                 style={inputStyle}
               />
             </div>
           </div>
         </div>
 
-        {/* Footer */}
         <div
           style={{
             display: "flex",
@@ -263,15 +245,14 @@ export default function VehicleModal({ vehicle, onClose }) {
             Cancelar
           </motion.button>
           <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={handleSubmit}
             disabled={loading}
             style={{
               padding: "9px 18px",
               borderRadius: 8,
-              background: "linear-gradient(135deg, #6366f1, #4f46e5)",
-              boxShadow: "0 4px 14px rgba(99,102,241,0.4)",
+              background: "#6366f1",
               color: "#fff",
               border: "none",
               fontSize: 13,
@@ -280,11 +261,7 @@ export default function VehicleModal({ vehicle, onClose }) {
               opacity: loading ? 0.7 : 1,
             }}
           >
-            {loading
-              ? "Salvando..."
-              : isEditing
-                ? "Salvar alterações"
-                : "Cadastrar"}
+            {loading ? "Registrando..." : "Registrar"}
           </motion.button>
         </div>
       </motion.div>
