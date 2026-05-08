@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import Footer from "./Footer";
 
 export default function Layout() {
   return (
@@ -13,14 +14,18 @@ export default function Layout() {
           display: "flex",
           flexDirection: "column",
           minWidth: 0,
-          background: "#f9fafb",
+          background: "#f5f7fb",
         }}
       >
         <Header />
 
+        {/* Conteúdo */}
         <div style={{ flex: 1 }}>
           <Outlet />
         </div>
+
+        {/* Footer */}
+        <Footer />
       </main>
     </div>
   );

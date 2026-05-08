@@ -1,73 +1,42 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Home,
+  CarFront,
+  Wrench,
+  History,
+  ChevronLeft,
+} from "lucide-react";
 
 const navItems = [
   { section: "Principal" },
   {
     to: "/",
+    label: "Inicio",
+    icon: <Home size={18} />,
+  },
+  {
+    to: "/Dashboard",
     label: "Dashboard",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
-        <rect x="1" y="1" width="6" height="6" rx="1" />
-        <rect x="9" y="1" width="6" height="6" rx="1" />
-        <rect x="1" y="9" width="6" height="6" rx="1" />
-        <rect x="9" y="9" width="6" height="6" rx="1" />
-      </svg>
-    ),
+    icon: <LayoutDashboard size={18} />,
   },
 
   { section: "Gestão" },
   {
     to: "/vehicles",
     label: "Veículos",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <rect x="1" y="4" width="14" height="9" rx="2" />
-        <circle cx="4.5" cy="13" r="1.5" />
-        <circle cx="11.5" cy="13" r="1.5" />
-        <path d="M3 4V3a1 1 0 011-1h4a1 1 0 011 1v1" />
-      </svg>
-    ),
+    icon: <CarFront size={18} />,
   },
   {
     to: "/maintenances",
     label: "Manutenções",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <circle cx="8" cy="8" r="6" />
-        <path d="M8 5v3l2 2" />
-      </svg>
-    ),
+    icon: <Wrench size={18} />,
   },
   {
     to: "/history",
     label: "Histórico",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <path d="M2 4h12M2 8h8M2 12h10" />
-      </svg>
-    ),
+    icon: <History size={18} />,
   },
 ];
 
@@ -217,20 +186,13 @@ export default function Sidebar() {
           (e.currentTarget.style.background = "rgba(255,255,255,0.03)")
         }
       >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
+        <ChevronLeft
+          size={16}
           style={{
             transform: collapsed ? "rotate(180deg)" : "none",
             transition: "transform 0.3s",
           }}
-        >
-          <path d="M10 3L6 8l4 5" />
-        </svg>
+        />
 
         {!collapsed && <span>Recolher</span>}
       </button>

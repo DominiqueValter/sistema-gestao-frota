@@ -234,6 +234,18 @@ export default function VehicleModal({ vehicle, onClose }) {
                 style={inputStyle}
               />
             </div>
+            <div>
+              <label style={labelStyle}>Status</label>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                style={inputStyle}
+              >
+                <option value="ATIVO">Ativo</option>
+                <option value="INATIVO">Inativo</option>
+              </select>
+            </div>
           </div>
         </div>
 
