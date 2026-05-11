@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, Car } from "lucide-react";
+import { Plus, Pencil, Trash2, Car, CheckCircle, XCircle } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Swal from "sweetalert2";
@@ -95,6 +95,64 @@ export default function Vehicles() {
     setModalOpen(false);
     setEditing(null);
     if (refresh) fetchVehicles();
+  };
+
+  const handleStatusChange = async (vehicle) => {
+    const actions = {
+      EM_MANUTENCAO: {
+        newStatus: "ATIVO",
+        title: "Concluir manutenção?",
+        text: `O veículo ${vehicle.licensePlate} voltará para Ativo.`,
+        confirmText: "Sim, concluir",
+        icon: "question",
+      },
+      ATIVO: {
+        newStatus: "INATIVO",
+        title: "Desativar veículo?",
+        text: `O veículo ${vehicle.licensePlate} será marcado como Inativo.`,
+        confirmText: "Sim, desativar",
+        icon: "warning",
+      },
+      INATIVO: {
+        newStatus: "ATIVO",
+        title: "Reativar veículo?",
+        text: `O veículo ${vehicle.licensePlate} voltará para Ativo.`,
+        confirmText: "Sim, reativar",
+        icon: "question",
+      },
+    };
+
+    const action = actions[vehicle.status];
+    if (!action) return;
+
+    const result = await Swal.fire({
+      title: action.title,
+      text: action.text,
+      icon: action.icon,
+      showCancelButton: true,
+      confirmButtonColor: "#6366f1",
+      cancelButtonColor: "#e5e7eb",
+      confirmButtonText: action.confirmText,
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await api.patch(`/vehicle/${vehicle.id}/status`, {
+        status: action.newStatus,
+      });
+      Swal.fire({
+        title: "Status atualizado!",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      fetchVehicles();
+    } catch (err) {
+      const msg = err.response?.data?.message || "Erro ao atualizar status.";
+      Swal.fire("Erro", msg, "error");
+    }
   };
 
   return (
@@ -239,7 +297,7 @@ export default function Vehicles() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "120px 1fr 1fr 80px 120px 110px",
+            gridTemplateColumns: "120px 1fr 1fr 80px 120px 140px",
             padding: "10px 20px",
             background: "#f9fafb",
             borderBottom: "0.5px solid #e5e7eb",
@@ -375,6 +433,35 @@ export default function Vehicles() {
                         }}
                       >
                         <Pencil size={13} />
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleStatusChange(v)}
+                        title={
+                          v.status === "EM_MANUTENCAO"
+                            ? "Concluir manutenção"
+                            : v.status === "ATIVO"
+                              ? "Desativar veículo"
+                              : "Reativar veículo"
+                        }
+                        style={{
+                          background:
+                            v.status === "ATIVO" ? "#f1f5f9" : "#f0fdf4",
+                          color: v.status === "ATIVO" ? "#64748b" : "#15803d",
+                          border: "none",
+                          borderRadius: 6,
+                          padding: "6px 8px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        {v.status === "ATIVO" ? (
+                          <XCircle size={13} />
+                        ) : (
+                          <CheckCircle size={13} />
+                        )}
                       </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.1 }}

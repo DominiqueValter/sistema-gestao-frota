@@ -23,15 +23,15 @@ public class VehicleService
     {
         var vehicle = await _vehicleRepository.GetByIdAsync(id);
         if (vehicle is null)
-            throw new KeyNotFoundException($"Veículo {id} não encontrado.");
+            throw new KeyNotFoundException($"Veï¿½culo {id} nï¿½o encontrado.");
         return vehicle;
     }
 
     public async Task<Vehicle> CreateAsync(CreateVehicleDto dto)
     {
-        // Regra: placa única
+        // Regra: placa ï¿½nica
         if (await _vehicleRepository.LicensePlateExistsAsync(dto.LicensePlate))
-            throw new InvalidOperationException($"Já existe um veículo com a placa {dto.LicensePlate}.");
+            throw new InvalidOperationException($"Jï¿½ existe um veï¿½culo com a placa {dto.LicensePlate}.");
 
         var vehicle = new Vehicle
         {
@@ -46,13 +46,13 @@ public class VehicleService
 
         await _vehicleRepository.AddAsync(vehicle);
 
-        // Registra no histórico
+        // Registra no histï¿½rico
         await _historyRepository.AddAsync(new History
         {
             Id = Guid.NewGuid(),
             VehicleId = vehicle.Id,
             Action = "CADASTRO",
-            Description = $"Veículo {vehicle.Brand} {vehicle.Model} ({vehicle.LicensePlate}) cadastrado.",
+            Description = $"Veï¿½culo {vehicle.Brand} {vehicle.Model} ({vehicle.LicensePlate}) cadastrado.",
             Date = DateTime.UtcNow
         });
 
@@ -63,14 +63,14 @@ public class VehicleService
     {
         var vehicle = await GetByIdAsync(id);
 
-        // Regra: quilometragem não pode diminuir
+        // Regra: quilometragem nï¿½o pode diminuir
         if (dto.Mileage < vehicle.Mileage)
             throw new InvalidOperationException(
-                $"Quilometragem não pode diminuir. Atual: {vehicle.Mileage}, Informada: {dto.Mileage}.");
+                $"Quilometragem nï¿½o pode diminuir. Atual: {vehicle.Mileage}, Informada: {dto.Mileage}.");
 
-        // Regra: status válido
+        // Regra: status vï¿½lido
         if (!Enum.TryParse<VehicleStatus>(dto.Status, out var newStatus))
-            throw new InvalidOperationException($"Status inválido: {dto.Status}.");
+            throw new InvalidOperationException($"Status invï¿½lido: {dto.Status}.");
 
         var oldStatus = vehicle.Status;
         var oldMileage = vehicle.Mileage;
@@ -84,7 +84,7 @@ public class VehicleService
 
         await _vehicleRepository.UpdateAsync(vehicle);
 
-        // Registra mudança de status no histórico
+        // Registra mudanï¿½a de status no histï¿½rico
         if (oldStatus != newStatus)
             await _historyRepository.AddAsync(new History
             {
@@ -95,7 +95,7 @@ public class VehicleService
                 Date = DateTime.UtcNow
             });
 
-        // Registra atualização de quilometragem no histórico
+        // Registra atualizaï¿½ï¿½o de quilometragem no histï¿½rico
         if (oldMileage != dto.Mileage)
             await _historyRepository.AddAsync(new History
             {
@@ -114,4 +114,31 @@ public class VehicleService
         var vehicle = await GetByIdAsync(id);
         await _vehicleRepository.DeleteAsync(vehicle);
     }
+
+    public async Task<Vehicle> UpdateStatusAsync(Guid id, string newStatus)
+{
+    var vehicle = await GetByIdAsync(id);
+
+    if (!Enum.TryParse<VehicleStatus>(newStatus, out var status))
+        throw new InvalidOperationException($"Status invÃ¡lido: {newStatus}.");
+
+    var oldStatus = vehicle.Status;
+
+    vehicle.Status = status;
+    vehicle.UpdatedAt = DateTime.UtcNow;
+
+    await _vehicleRepository.UpdateAsync(vehicle);
+
+    await _historyRepository.AddAsync(new History
+    {
+        Id = Guid.NewGuid(),
+        VehicleId = vehicle.Id,
+        Action = "MUDANCA_STATUS",
+        Description = $"Status alterado de {oldStatus} para {status}.",
+        Date = DateTime.UtcNow
+    });
+
+    return vehicle;
+}
+
 }

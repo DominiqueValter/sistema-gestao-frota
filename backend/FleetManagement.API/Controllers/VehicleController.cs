@@ -81,4 +81,22 @@ public class VehicleController : ControllerBase
             return NotFound(new { message = ex.Message });
         }
     }
+
+    [HttpPatch("{id}/status")]
+public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateStatusDto dto)
+{
+    try
+    {
+        var vehicle = await _vehicleService.UpdateStatusAsync(id, dto.Status);
+        return Ok(vehicle);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return NotFound(new { message = ex.Message });
+    }
+    catch (InvalidOperationException ex)
+    {
+        return BadRequest(new { message = ex.Message });
+    }
+}
 }
