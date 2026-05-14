@@ -5,6 +5,7 @@ import Vehicles from "./pages/Vehicles";
 import Maintenances from "./pages/Maintenances";
 import History from "./pages/History";
 import Home from "./pages/Home";
+import VehicleDetails from "./pages/VehicleDetails";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="vehicles" element={<Vehicles />} />
+          <Route path="vehicles/:id" element={<VehicleDetails />} />
           <Route path="maintenances" element={<Maintenances />} />
           <Route path="history" element={<History />} />
         </Route>

@@ -19,8 +19,10 @@ public class MaintenanceController : ControllerBase
     public async Task<IActionResult> GetByVehicle(Guid vehicleId)
     {
         var maintenances = await _maintenanceService.GetByVehicleIdAsync(vehicleId);
+
         return Ok(maintenances);
     }
+    
 
     [HttpPost]
     public async Task<IActionResult> Create(Guid vehicleId, [FromBody] CreateMaintenanceDto dto)

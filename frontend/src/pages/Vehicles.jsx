@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, Car, CheckCircle, XCircle } from "lucide-react";
+import { Plus, Trash2, Car, CheckCircle, XCircle, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Swal from "sweetalert2";
@@ -20,6 +21,7 @@ export default function Vehicles() {
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("ALL");
+  const navigate = useNavigate();
 
   const fetchVehicles = async () => {
     try {
@@ -420,10 +422,10 @@ export default function Vehicles() {
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        onClick={() => handleEdit(v)}
+                        onClick={() => navigate(`/vehicles/${v.id}`)}
                         style={{
-                          background: "#eef2ff",
-                          color: "#4f46e5",
+                          background: "#eff6ff",
+                          color: "#2563eb",
                           border: "none",
                           borderRadius: 6,
                           padding: "6px 8px",
@@ -432,7 +434,7 @@ export default function Vehicles() {
                           alignItems: "center",
                         }}
                       >
-                        <Pencil size={13} />
+                        <Eye size={13} />
                       </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
