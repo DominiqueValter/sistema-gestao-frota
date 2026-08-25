@@ -1,15 +1,38 @@
 services:
   postgres:
-    image: postgres:16
-    container_name: fleet_postgres
+    image: "${POSTGRES_IMAGE:-postgres:16}"
+    container_name: "${POSTGRES_CONTAINER:-fleet_postgres}"
     environment:
-      POSTGRES_USER: fleetuser
-      POSTGRES_PASSWORD: fleetpass123
-      POSTGRES_DB: fleet_db
+      POSTGRES_USER: "${POSTGRES_USER:-fleetuser}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD não definida — configure no .env}"
+      POSTGRES_DB: "${POSTGRES_DB:-fleet_db}"
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - "${POSTGRES_VOLUME:-postgres_data}:/var/lib/postgresql/data"
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/FleetManagement.API/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      AllowedOrigins: "${ALLOWED_ORIGINS:-http://localhost:3000}"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=${POSTGRES_PORT:-5432};Database=${POSTGRES_DB:-fleet_db};Username=${POSTGRES_USER:-fleetuser};Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD não definida — configure no .env}"
+    ports:
+      - "${BACKEND_PORT:-5000}:80"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Use VITE_API_URL (exposed to Vite) if provided, otherwise default to localhost and BACKEND_PORT
+        VITE_API_URL: "${VITE_API_URL:-http://localhost:${BACKEND_PORT:-5000}}/api"
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
 
 volumes:
   postgres_data:
