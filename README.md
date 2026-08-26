@@ -31,11 +31,11 @@ A robust full-stack solution for enterprise vehicle fleet tracking, maintenance 
 
 Prerequisites: [Docker Desktop](https://www.docker.com/) installed.
 
-\`\`\`bash
+```bash
 # Clone the repository
 git clone https://github.com/DominiqueValter/sistema-gestao-frota.git
 cd sistema-gestao-frota
 
 # Run the complete stack (API + Database + Front-End)
 docker-compose up -d --build
-\`\`\`
+```
