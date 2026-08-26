@@ -5,9 +5,7 @@ A robust full-stack solution for enterprise vehicle fleet tracking, maintenance 
 ---
 
 ### 🌐 Live Demo & API Docs
-- **Web App:** [https://seu-front.vercel.app](https://seu-front.vercel.app)
-- **API Swagger / OpenAPI:** [https://sua-api.onrender.com/swagger](https://sua-api.onrender.com/swagger)
-
+- **Web App:** Aplicativo Web: https://fleet-management-dominique.up.railway.app
 ---
 
 ### 🛠️ Tech Stack & Architecture
