@@ -1,6 +1,6 @@
 # 🚗 Fleet Management System
 
-A robust full-stack solution for enterprise vehicle fleet tracking, maintenance scheduling, and driver assignment. Built with **.NET 8 (C#)** and **React (TypeScript)** following Clean Architecture principles.
+A robust full-stack solution for enterprise vehicle fleet tracking, maintenance scheduling, and driver assignment. Built with **.NET 8 (C#)** and **React (Javascript)** following Clean Architecture principles.
 
 ---
 
@@ -10,7 +10,7 @@ A robust full-stack solution for enterprise vehicle fleet tracking, maintenance 
 
 ### 🛠️ Tech Stack & Architecture
 - **Back-End:** C# | .NET 8 | ASP.NET Core Web API | EF Core | FluentValidation | xUnit
-- **Front-End:** React | TypeScript | Tailwind CSS | Axios | React Query
+- **Front-End:** React | Javascript | Tailwind CSS | Axios | React Query
 - **Database & DevOps:** PostgreSQL | Docker & Docker Compose | GitHub Actions (CI/CD)
 
 ---
